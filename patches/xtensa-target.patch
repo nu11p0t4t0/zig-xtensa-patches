@@ -1,5 +1,5 @@
---- /tmp/zig-0.14.0/lib/std/Target/xtensa.zig	2026-10-06 21:52:53.902978073 +0000
-+++ <toolchain-root>/zig-relsafe-x86_64-linux-musl-baseline/lib/std/Target/xtensa.zig	2025-03-05 14:37:56.000000000 +0000
+--- a/lib/std/Target/xtensa.zig
++++ b/lib/std/Target/xtensa.zig
 @@ -5,7 +5,39 @@
  const CpuModel = std.Target.Cpu.Model;
  

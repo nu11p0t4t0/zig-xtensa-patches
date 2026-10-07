@@ -1,0 +1,170 @@
+diff --git a/llvm_target_stubs.c b/llvm_target_stubs.c
+new file mode 100644
+index 00000000..ea45be83
+--- /dev/null
++++ b/llvm_target_stubs.c
+@@ -0,0 +1,99 @@
++// No-op LLVM target registration stubs.
++// This LLVM was built with LLVM_TARGETS_TO_BUILD=AArch64 plus the Xtensa
++// experimental target, but Zig's codegen calls LLVMInitialize<T>Target*
++// for every target it knows, so the link needs these symbols. Registering
++// nothing for a target Zig never emits code for is safe; asking Zig to
++// build for one of them fails with a clear "unknown target" error.
++
++void LLVMInitializeAMDGPUAsmParser(void) { }
++void LLVMInitializeAMDGPUAsmPrinter(void) { }
++void LLVMInitializeAMDGPUTarget(void) { }
++void LLVMInitializeAMDGPUTargetInfo(void) { }
++void LLVMInitializeAMDGPUTargetMC(void) { }
++void LLVMInitializeARMAsmParser(void) { }
++void LLVMInitializeARMAsmPrinter(void) { }
++void LLVMInitializeARMTarget(void) { }
++void LLVMInitializeARMTargetInfo(void) { }
++void LLVMInitializeARMTargetMC(void) { }
++void LLVMInitializeAVRAsmParser(void) { }
++void LLVMInitializeAVRAsmPrinter(void) { }
++void LLVMInitializeAVRTarget(void) { }
++void LLVMInitializeAVRTargetInfo(void) { }
++void LLVMInitializeAVRTargetMC(void) { }
++void LLVMInitializeBPFAsmParser(void) { }
++void LLVMInitializeBPFAsmPrinter(void) { }
++void LLVMInitializeBPFTarget(void) { }
++void LLVMInitializeBPFTargetInfo(void) { }
++void LLVMInitializeBPFTargetMC(void) { }
++void LLVMInitializeHexagonAsmParser(void) { }
++void LLVMInitializeHexagonAsmPrinter(void) { }
++void LLVMInitializeHexagonTarget(void) { }
++void LLVMInitializeHexagonTargetInfo(void) { }
++void LLVMInitializeHexagonTargetMC(void) { }
++void LLVMInitializeLanaiAsmParser(void) { }
++void LLVMInitializeLanaiAsmPrinter(void) { }
++void LLVMInitializeLanaiTarget(void) { }
++void LLVMInitializeLanaiTargetInfo(void) { }
++void LLVMInitializeLanaiTargetMC(void) { }
++void LLVMInitializeLoongArchAsmParser(void) { }
++void LLVMInitializeLoongArchAsmPrinter(void) { }
++void LLVMInitializeLoongArchTarget(void) { }
++void LLVMInitializeLoongArchTargetInfo(void) { }
++void LLVMInitializeLoongArchTargetMC(void) { }
++void LLVMInitializeMSP430AsmParser(void) { }
++void LLVMInitializeMSP430AsmPrinter(void) { }
++void LLVMInitializeMSP430Target(void) { }
++void LLVMInitializeMSP430TargetInfo(void) { }
++void LLVMInitializeMSP430TargetMC(void) { }
++void LLVMInitializeMipsAsmParser(void) { }
++void LLVMInitializeMipsAsmPrinter(void) { }
++void LLVMInitializeMipsTarget(void) { }
++void LLVMInitializeMipsTargetInfo(void) { }
++void LLVMInitializeMipsTargetMC(void) { }
++void LLVMInitializeNVPTXAsmPrinter(void) { }
++void LLVMInitializeNVPTXTarget(void) { }
++void LLVMInitializeNVPTXTargetInfo(void) { }
++void LLVMInitializeNVPTXTargetMC(void) { }
++void LLVMInitializePowerPCAsmParser(void) { }
++void LLVMInitializePowerPCAsmPrinter(void) { }
++void LLVMInitializePowerPCTarget(void) { }
++void LLVMInitializePowerPCTargetInfo(void) { }
++void LLVMInitializePowerPCTargetMC(void) { }
++void LLVMInitializeRISCVAsmParser(void) { }
++void LLVMInitializeRISCVAsmPrinter(void) { }
++void LLVMInitializeRISCVTarget(void) { }
++void LLVMInitializeRISCVTargetInfo(void) { }
++void LLVMInitializeRISCVTargetMC(void) { }
++void LLVMInitializeSPIRVAsmPrinter(void) { }
++void LLVMInitializeSPIRVTarget(void) { }
++void LLVMInitializeSPIRVTargetInfo(void) { }
++void LLVMInitializeSPIRVTargetMC(void) { }
++void LLVMInitializeSparcAsmParser(void) { }
++void LLVMInitializeSparcAsmPrinter(void) { }
++void LLVMInitializeSparcTarget(void) { }
++void LLVMInitializeSparcTargetInfo(void) { }
++void LLVMInitializeSparcTargetMC(void) { }
++void LLVMInitializeSystemZAsmParser(void) { }
++void LLVMInitializeSystemZAsmPrinter(void) { }
++void LLVMInitializeSystemZTarget(void) { }
++void LLVMInitializeSystemZTargetInfo(void) { }
++void LLVMInitializeSystemZTargetMC(void) { }
++void LLVMInitializeVEAsmParser(void) { }
++void LLVMInitializeVEAsmPrinter(void) { }
++void LLVMInitializeVETarget(void) { }
++void LLVMInitializeVETargetInfo(void) { }
++void LLVMInitializeVETargetMC(void) { }
++void LLVMInitializeWebAssemblyAsmParser(void) { }
++void LLVMInitializeWebAssemblyAsmPrinter(void) { }
++void LLVMInitializeWebAssemblyTarget(void) { }
++void LLVMInitializeWebAssemblyTargetInfo(void) { }
++void LLVMInitializeWebAssemblyTargetMC(void) { }
++void LLVMInitializeX86AsmParser(void) { }
++void LLVMInitializeX86AsmPrinter(void) { }
++void LLVMInitializeX86Target(void) { }
++void LLVMInitializeX86TargetInfo(void) { }
++void LLVMInitializeX86TargetMC(void) { }
++void LLVMInitializeXCoreAsmPrinter(void) { }
++void LLVMInitializeXCoreTarget(void) { }
++void LLVMInitializeXCoreTargetInfo(void) { }
++void LLVMInitializeXCoreTargetMC(void) { }
+diff --git a/zig/cmake/Findllvm.cmake b/zig/cmake/Findllvm.cmake
+index 0c08d4f0..8420f227 100644
+--- a/zig/cmake/Findllvm.cmake
++++ b/zig/cmake/Findllvm.cmake
+@@ -83,7 +83,7 @@ if(ZIG_USE_LLVM_CONFIG)
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+     string(REPLACE " " ";" LLVM_TARGETS_BUILT "${LLVM_TARGETS_BUILT_SPACES}")
+ 
+-    set(ZIG_LLVM_REQUIRED_TARGETS "AArch64;AMDGPU;ARM;AVR;BPF;Hexagon;Lanai;LoongArch;Mips;MSP430;NVPTX;PowerPC;RISCV;SPIRV;Sparc;SystemZ;VE;WebAssembly;X86;XCore")
++    set(ZIG_LLVM_REQUIRED_TARGETS "AArch64;Xtensa")
+ 
+     set(ZIG_LLVM_REQUIRED_TARGETS_ENABLED TRUE)
+     foreach(TARGET_NAME IN LISTS ZIG_LLVM_REQUIRED_TARGETS)
+diff --git a/zig/lib/libcxx/include/__random/clamp_to_integral.h b/zig/lib/libcxx/include/__random/clamp_to_integral.h
+index 9ddf41e0..98ab2931 100644
+--- a/zig/lib/libcxx/include/__random/clamp_to_integral.h
++++ b/zig/lib/libcxx/include/__random/clamp_to_integral.h
+@@ -12,6 +12,12 @@
+ #include <__config>
+ #include <cmath>
+ #include <limits>
++// INFINITY is used unqualified below; guarantee it is visible even when the
++// C library headers do not provide the macro.
++#include <math.h>
++#ifndef INFINITY
++#  define INFINITY (__builtin_inff())
++#endif
+ 
+ #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+ #  pragma GCC system_header
+diff --git a/zig/src/codegen/llvm.zig b/zig/src/codegen/llvm.zig
+index b822b273..bc0a1585 100644
+--- a/zig/src/codegen/llvm.zig
++++ b/zig/src/codegen/llvm.zig
+@@ -4757,13 +4757,10 @@ pub fn initializeLLVMTarget(arch: std.Target.Cpu.Arch) void {
+             bindings.LLVMInitializeBPFAsmPrinter();
+             bindings.LLVMInitializeBPFAsmParser();
+         },
+-        .hexagon => {
+-            bindings.LLVMInitializeHexagonTarget();
+-            bindings.LLVMInitializeHexagonTargetInfo();
+-            bindings.LLVMInitializeHexagonTargetMC();
+-            bindings.LLVMInitializeHexagonAsmPrinter();
+-            bindings.LLVMInitializeHexagonAsmParser();
+-        },
++        // The Hexagon backend is not part of this LLVM build (its sources do not
++        // compile against the Apple libc++ in this toolchain), so its
++        // registration calls are omitted; targeting hexagon fails at lookup.
++        .hexagon => {},
+         .lanai => {
+             bindings.LLVMInitializeLanaiTarget();
+             bindings.LLVMInitializeLanaiTargetInfo();
+diff --git a/zig/stage1/config.zig.in b/zig/stage1/config.zig.in
+index 087585cd..4e20d65a 100644
+--- a/zig/stage1/config.zig.in
++++ b/zig/stage1/config.zig.in
+@@ -2,7 +2,7 @@ pub const have_llvm = true;
+ pub const llvm_has_m68k = false;
+ pub const llvm_has_csky = false;
+ pub const llvm_has_arc = false;
+-pub const llvm_has_xtensa = false;
++pub const llvm_has_xtensa = true;
+ pub const version: [:0]const u8 = "@RESOLVED_ZIG_VERSION@";
+ pub const semver = @import("std").SemanticVersion.parse(version) catch unreachable;
+ pub const enable_debug_extensions = false;

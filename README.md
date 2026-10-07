@@ -41,3 +41,27 @@ zig build-exe -target xtensa-freestanding -mcpu=esp32s2 ...
 # ESP8266
 zig build-exe -target xtensa-freestanding -mcpu=esp8266 ...
 ```
+
+## macOS local toolchain recipe
+
+`bootstrap/macos-toolchain.patch` records the edits used on this machine to build a
+Zig 0.14.0 Xtensa compiler against a reduced LLVM. It is a **local build recipe, not
+an upstream-ready patch**, and it deliberately does *not* live in `patches/` because
+`build.sh` / `build_macos.sh` apply every `patches/*.patch` to a stock Zig checkout.
+
+Contents:
+- `zig/stage1/config.zig.in` — `llvm_has_xtensa = true` (the actual port enablement)
+- `zig/lib/libcxx/include/__random/clamp_to_integral.h` — make `INFINITY` visible
+  when the C library headers do not define it
+- `zig/src/codegen/llvm.zig` — omit Hexagon registration (that backend is not in
+  this LLVM build)
+- `zig/cmake/Findllvm.cmake` — restrict `ZIG_LLVM_REQUIRED_TARGETS` to the targets
+  this LLVM actually builds (**breaks normal builds; local only**)
+- `llvm_target_stubs.c` — no-op `LLVMInitialize<T>Target*` symbols so the link
+  succeeds with the reduced LLVM
+
+Apply inside a `recamshak/zig-espressif` checkout:
+
+```bash
+git apply /path/to/bootstrap/macos-toolchain.patch
+```
