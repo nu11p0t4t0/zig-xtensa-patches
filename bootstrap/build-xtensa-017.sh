@@ -71,11 +71,21 @@ cmake --build . --target install -j "$JOBS"
 echo "== 2/3: Zig $ZIG_VERSION host build (stage1, Xtensa enabled) =="
 mkdir -p "$ROOTDIR/out/build-zig-host"
 cd "$ROOTDIR/out/build-zig-host"
+# ZIG_EXTRA_BUILD_ARGS reaches the FINAL compiler (stage3), which is the one
+# the family uses. Without -Dllvm-has-xtensa the stage3 build leaves
+# build_options.llvm_has_xtensa false, so zig's codegen never calls
+# LLVMInitializeXtensaTarget* and every xtensa build dies with "LLVM failed
+# to parse 'xtensa-unknown-unknown-unknown': Unable to find target for this
+# triple (no targets are registered)". The 0.16 fork got away without this
+# because its LLVM (espressif's, LLVM 21) still self-registers the target;
+# upstream LLVM 22 dropped the static constructors, so the explicit call is
+# required now.
 cmake "$ROOTDIR/zig" \
   -DCMAKE_INSTALL_PREFIX="$ROOTDIR/out/host" \
   -DCMAKE_PREFIX_PATH="$ROOTDIR/out/host" \
   -DCMAKE_BUILD_TYPE=Release \
-  -DZIG_VERSION="$ZIG_VERSION"
+  -DZIG_VERSION="$ZIG_VERSION" \
+  -DZIG_EXTRA_BUILD_ARGS="-Dllvm-has-xtensa"
 cmake --build . --target install -j "$JOBS"
 
 echo "== 3/3: verify =="

@@ -90,6 +90,28 @@ triple (no targets are registered)".
   from **Espressif's fork** (the only LLVM 22 with the Xtensa backend, tag
   `esp-22.1.4_20260825`), then zig 0.17.0's cmake build against it.
 
+### The stage3 flag (the second trap)
+
+Zig's cmake build never passes `-Dllvm-has-xtensa`, and the option that
+makes the FINAL compiler (stage3 - the one the family uses) call
+`LLVMInitializeXtensaTarget*` defaults to FALSE. `stage1/config.zig.in`'s
+`llvm_has_xtensa = true` only reaches the stage1/stage2 compilers. Without
+the flag every xtensa build dies with:
+
+```
+LLVM failed to parse 'xtensa-unknown-unknown-unknown': Unable to find
+target for this triple (no targets are registered)
+```
+
+The 0.16 fork did not need it because espressif's LLVM 21 still
+self-registers the target through the backends' static constructors;
+upstream LLVM 22 dropped those, so the explicit call is required now.
+Pass it through the cmake hook that exists for this:
+
+```sh
+cmake "$ROOTDIR/zig" ... -DZIG_EXTRA_BUILD_ARGS="-Dllvm-has-xtensa"
+```
+
 ### The LLVM part
 
 Zig 0.17.0 wants `llvm-config-22` and accepts any 22.x
