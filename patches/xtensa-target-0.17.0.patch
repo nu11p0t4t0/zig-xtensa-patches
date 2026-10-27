@@ -1,0 +1,191 @@
+diff --git a/cmake/Findllvm.cmake b/cmake/Findllvm.cmake
+index 7c3b3476..e6d79076 100644
+--- a/cmake/Findllvm.cmake
++++ b/cmake/Findllvm.cmake
+@@ -83,7 +83,7 @@ if(ZIG_USE_LLVM_CONFIG)
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+     string(REPLACE " " ";" LLVM_TARGETS_BUILT "${LLVM_TARGETS_BUILT_SPACES}")
+ 
+-    set(ZIG_LLVM_REQUIRED_TARGETS "AArch64;AMDGPU;ARM;AVR;BPF;Hexagon;Lanai;LoongArch;Mips;MSP430;NVPTX;PowerPC;RISCV;SPIRV;Sparc;SystemZ;VE;WebAssembly;X86;XCore")
++    set(ZIG_LLVM_REQUIRED_TARGETS "AArch64;AMDGPU;ARM;AVR;BPF;Hexagon;Lanai;LoongArch;Mips;MSP430;NVPTX;PowerPC;RISCV;SPIRV;Sparc;SystemZ;VE;WebAssembly;X86;XCore;Xtensa")
+ 
+     set(ZIG_LLVM_REQUIRED_TARGETS_ENABLED TRUE)
+     foreach(TARGET_NAME IN LISTS ZIG_LLVM_REQUIRED_TARGETS)
+diff --git a/lib/std/Target/xtensa.zig b/lib/std/Target/xtensa.zig
+index f2ca1f44..1dfeee17 100644
+--- a/lib/std/Target/xtensa.zig
++++ b/lib/std/Target/xtensa.zig
+@@ -13,10 +13,14 @@ pub const Feature = enum {
+     density,
+     dfpaccel,
+     div32,
++    esp32s2ops,
++    esp32s3ops,
+     exception,
++    expstate,
+     extendedl32r,
+     forced_atomics,
+     fp,
++    hifi3,
+     highpriinterrupts,
+     highpriinterrupts_level3,
+     highpriinterrupts_level4,
+@@ -93,11 +97,26 @@ pub const all_features = blk: {
+         .description = "Enable Xtensa Div32 option",
+         .dependencies = featureSet(&[_]Feature{}),
+     };
++    result[@backingInt(Feature.esp32s2ops)] = .{
++        .llvm_name = "esp32s2ops",
++        .description = "esp32s2ops extension",
++        .dependencies = featureSet(&[_]Feature{}),
++    };
++    result[@backingInt(Feature.esp32s3ops)] = .{
++        .llvm_name = "esp32s3ops",
++        .description = "esp32s3ops extension",
++        .dependencies = featureSet(&[_]Feature{}),
++    };
+     result[@backingInt(Feature.exception)] = .{
+         .llvm_name = "exception",
+         .description = "Enable Xtensa Exception option",
+         .dependencies = featureSet(&[_]Feature{}),
+     };
++    result[@backingInt(Feature.expstate)] = .{
++        .llvm_name = "expstate",
++        .description = "expstate extension",
++        .dependencies = featureSet(&[_]Feature{}),
++    };
+     result[@backingInt(Feature.extendedl32r)] = .{
+         .llvm_name = "extendedl32r",
+         .description = "Enable Xtensa Extended L32R option",
+@@ -113,6 +132,11 @@ pub const all_features = blk: {
+         .description = "Enable Xtensa Single FP instructions",
+         .dependencies = featureSet(&[_]Feature{}),
+     };
++    result[@backingInt(Feature.hifi3)] = .{
++        .llvm_name = "hifi3",
++        .description = "hifi3 extension",
++        .dependencies = featureSet(&[_]Feature{}),
++    };
+     result[@backingInt(Feature.highpriinterrupts)] = .{
+         .llvm_name = "highpriinterrupts",
+         .description = "Enable Xtensa HighPriInterrupts option",
+@@ -257,6 +281,36 @@ pub const all_features = blk: {
+ };
+ 
+ pub const cpu = struct {
++    pub const cnl: CpuModel = .{
++        .name = "cnl",
++        .llvm_name = "cnl",
++        .features = featureSet(&[_]Feature{
++            .bool,
++            .coprocessor,
++            .dcache,
++            .debug,
++            .density,
++            .div32,
++            .exception,
++            .fp,
++            .hifi3,
++            .highpriinterrupts,
++            .interrupt,
++            .loop,
++            .miscsr,
++            .mul32,
++            .mul32high,
++            .nsa,
++            .prid,
++            .regprotect,
++            .rvector,
++            .s32c1i,
++            .sext,
++            .threadptr,
++            .timers1,
++            .windowed,
++        }),
++    };
+     pub const esp32: CpuModel = .{
+         .name = "esp32",
+         .llvm_name = "esp32",
+@@ -291,6 +345,69 @@ pub const cpu = struct {
+             .windowed,
+         }),
+     };
++    pub const esp32s2: CpuModel = .{
++        .name = "esp32s2",
++        .llvm_name = "esp32s2",
++        .features = featureSet(&[_]Feature{
++            .clamps,
++            .coprocessor,
++            .dcache,
++            .debug,
++            .density,
++            .div32,
++            .esp32s2ops,
++            .exception,
++            .highpriinterrupts_level7,
++            .interrupt,
++            .minmax,
++            .miscsr,
++            .mul16,
++            .mul32,
++            .mul32high,
++            .nsa,
++            .prid,
++            .regprotect,
++            .rvector,
++            .sext,
++            .threadptr,
++            .timers3,
++            .windowed,
++        }),
++    };
++    pub const esp32s3: CpuModel = .{
++        .name = "esp32s3",
++        .llvm_name = "esp32s3",
++        .features = featureSet(&[_]Feature{
++            .bool,
++            .clamps,
++            .coprocessor,
++            .dcache,
++            .debug,
++            .density,
++            .div32,
++            .esp32s3ops,
++            .exception,
++            .fp,
++            .highpriinterrupts_level7,
++            .interrupt,
++            .loop,
++            .mac16,
++            .minmax,
++            .miscsr,
++            .mul16,
++            .mul32,
++            .mul32high,
++            .nsa,
++            .prid,
++            .regprotect,
++            .rvector,
++            .s32c1i,
++            .sext,
++            .threadptr,
++            .timers3,
++            .windowed,
++        }),
++    };
+     pub const esp8266: CpuModel = .{
+         .name = "esp8266",
+         .llvm_name = "esp8266",
+diff --git a/stage1/config.zig.in b/stage1/config.zig.in
+index d975f286..0f4fadcc 100644
+--- a/stage1/config.zig.in
++++ b/stage1/config.zig.in
+@@ -2,7 +2,7 @@ pub const have_llvm = true;
+ pub const llvm_has_m68k = false;
+ pub const llvm_has_csky = false;
+ pub const llvm_has_arc = false;
+-pub const llvm_has_xtensa = false;
++pub const llvm_has_xtensa = true;
+ pub const version: [:0]const u8 = "@RESOLVED_ZIG_VERSION@";
+ pub const semver = @import("std").SemanticVersion.parse(version) catch unreachable;
+ pub const enable_debug_extensions = false;

@@ -65,3 +65,63 @@ Apply inside a `recamshak/zig-espressif` checkout:
 ```bash
 git apply /path/to/bootstrap/macos-toolchain.patch
 ```
+
+## Zig 0.17.0 (the family's current device toolchain)
+
+The family moved to Zig 0.17.0 in October 2026. Stock 0.17.0 has **no Xtensa
+support at all**: `std/Target/xtensa.zig` declares only `esp32`, `esp8266`
+and `generic`, and the LLVM it links has no Xtensa backend, so
+`zig build -target xtensa-freestanding-none` fails with "LLVM failed to
+parse xtensa-unknown-unknown-unknown: Unable to find target for this
+triple (no targets are registered)".
+
+- `patches/xtensa-target-0.17.0.patch` — the three-file port (191 lines):
+  - `lib/std/Target/xtensa.zig` — the CPU models `cnl`, `esp32s2`,
+    `esp32s3` and the features `esp32s2ops`, `esp32s3ops`, `expstate`,
+    `hifi3`, re-expressed in 0.17 syntax (`@backingInt`, `field_names.len`;
+    0.16 used `@intFromEnum` and `fields.len`).
+  - `stage1/config.zig.in` — `llvm_has_xtensa = true`, the switch that
+    makes zig's codegen register the Xtensa LLVM target
+    (`src/codegen/llvm.zig` already carries the 0.17 branch).
+  - `cmake/Findllvm.cmake` — `Xtensa` added to the required-target list, so
+    a stock LLVM without the backend is refused instead of silently
+    producing a compiler that cannot target the chip.
+- `bootstrap/build-xtensa-017.sh` — the build recipe: an LLVM host build
+  from **Espressif's fork** (the only LLVM 22 with the Xtensa backend, tag
+  `esp-22.1.4_20260825`), then zig 0.17.0's cmake build against it.
+
+### The LLVM part
+
+Zig 0.17.0 wants `llvm-config-22` and accepts any 22.x
+(`cmake/Findllvm.cmake` rejects < 22 and >= 23), so Espressif's
+`esp-22.1.4_20260825` qualifies. **Xtensa is an EXPERIMENTAL target in
+that fork** (`llvm/CMakeLists.txt`, `LLVM_ALL_EXPERIMENTAL_TARGETS`), not a
+default one, so the build needs:
+
+```sh
+-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=Xtensa
+```
+
+Without it the LLVM builds without the Xtensa backend, `llvm-config
+--targets-built` omits Xtensa, and zig's configure refuses the LLVM with
+"missing target Xtensa". The 0.16 bootstrap needed the same flag.
+
+### Usage
+
+```sh
+# 1. the LLVM with Xtensa
+git clone --depth 1 --branch esp-22.1.4_20260825 \
+    https://github.com/espressif/llvm-project.git llvm-22-xtensa
+
+# 2. zig 0.17.0
+git clone --depth 1 --branch 0.17.0 https://github.com/ziglang/zig.git zig-017-src
+git -C zig-017-src apply ../zig-xtensa-patches/patches/xtensa-target-0.17.0.patch
+
+# 3. build (run from the tree root: llvm/ and zig/ beside the script)
+sh bootstrap/build-xtensa-017.sh
+# -> out/host/bin/zig, out/host/bin/llvm-nm
+```
+
+The family keeps the toolchain at `0x_Z1/out/zig-xtensa-017/` (the path
+`0x_Z1Gdmm/tools/idf-build.sh` and `tools/linkgate.sh` already expect):
+`out/zig-xtensa-017/host/zig` and `out/zig-xtensa-017/host/bin/llvm-nm`.
